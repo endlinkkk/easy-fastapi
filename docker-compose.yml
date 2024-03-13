@@ -1,0 +1,49 @@
+version: "3"
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile 
+    volumes:
+      - ./src:/app/src
+      - ./.env:/app/.env
+      - ./static:/usr/share/nginx/html/static
+    ports:
+      - 8000:8000
+    depends_on:
+      - db
+
+
+  nginx:
+    image: nginx
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+      - ./static:/usr/share/nginx/html/static
+    ports:
+      - 80:80
+    restart: always
+    depends_on: 
+      - app
+
+
+  db:
+    container_name: pg_db
+    image: postgres:14-alpine
+    environment:
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: root
+      POSTGRES_DB: my_db
+    ports:
+      - "5432:5432"
+
+  pgadmin:
+    container_name: pgadmin
+    image: dpage/pgadmin4
+    environment:
+      PGADMIN_DEFAULT_EMAIL: noemail@noemail.com
+      PGADMIN_DEFAULT_PASSWORD: root
+    ports:
+      - "5050:80"
+    depends_on:
+      - db
