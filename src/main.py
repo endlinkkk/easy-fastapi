@@ -2,13 +2,8 @@ from fastapi import FastAPI, Request, HTTPException
 from fastapi.responses import JSONResponse
 from src.microblog_api.router import router as microblog_router
 from src.database import create_db, check_content, add_fake_user
-from fastapi.staticfiles import StaticFiles
-from fastapi.templating import Jinja2Templates
-from fastapi.responses import HTMLResponse
 from contextlib import asynccontextmanager
 from loguru import logger
-import uvicorn
-import os
 
 
 @asynccontextmanager

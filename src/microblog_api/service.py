@@ -7,9 +7,6 @@ from sqlalchemy import select, delete
 from sqlalchemy.orm import Session
 from loguru import logger
 
-import os
-
-
 IMAGEDIR = "/usr/share/nginx/html/static/images/"
 
 
