@@ -1,21 +1,25 @@
-FROM python:3.11 AS builder
+FROM python:3.12 AS builder
 
-RUN apt-get update && apt-get install -y nginx
+# Установка необходимых системных пакетов
+RUN apt-get update && apt-get install -y nginx curl
 
-COPY requirements.txt /
 
-RUN pip install --no-cache-dir -r /requirements.txt
+# Копируем файлы poetry для установки зависимостей
+COPY pyproject.toml poetry.lock /
 
+RUN pip install poetry
+
+RUN poetry config virtualenvs.create false
+RUN poetry install --no-root --no-interaction --no-ansi
+
+# Копируем исходный код и другие файлы
 COPY src /app/src
-
 COPY static /usr/share/nginx/html/static
-
 COPY nginx.conf /etc/nginx/nginx.conf
-
 COPY tests /app/tests
 
-WORKDIR app
+# Устанавливаем рабочую директорию
+WORKDIR /app
 
-#CMD gunicorn -k uvicorn.workers.UvicornWorker src.main:app --bind=0.0.0.0:8000
-
+# Команда для запуска приложения
 CMD ["uvicorn", "src.main:app", "--host", "0.0.0.0", "--port", "8000"]

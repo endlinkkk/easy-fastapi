@@ -10,10 +10,11 @@ from sqlalchemy import (
 )
 from sqlalchemy import create_engine
 from sqlalchemy.orm import DeclarativeBase, Session, sessionmaker
-from .config import POSTGRES_DB, POSTGRES_PASSWORD, POSTGRES_USER
+from .settings import get_settings 
 
+settings = get_settings()
 engine = create_engine(
-    f"postgresql://{POSTGRES_USER}:{POSTGRES_PASSWORD}@db:5432/{POSTGRES_DB}", echo=True
+    f"postgresql://{settings.POSTGRES_USER}:{settings.POSTGRES_PASSWORD}@db:5432/{settings.POSTGRES_DB}", echo=True
 )
 session_maker = sessionmaker(engine, class_=Session)
 
@@ -115,7 +116,7 @@ def get_session() -> Generator[Session, None, None]:
 
 def add_fake_user() -> None:
     session = next(get_session())
-    fake_user = User(name="Catalyst", api="smile")
+    fake_user = User(name="TestUser", api="TestApi")
     session.add(fake_user)
     session.commit()
 
